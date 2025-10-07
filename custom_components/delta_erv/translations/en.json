@@ -1,0 +1,40 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Delta ERV Setup",
+        "description": "Configure your Delta ERV connection",
+        "data": {
+          "name": "Device Name",
+          "connection_type": "Connection Type"
+        }
+      },
+      "serial": {
+        "title": "Serial Connection",
+        "description": "Configure RS485 serial connection parameters",
+        "data": {
+          "port": "Serial Port",
+          "slave_id": "Slave ID",
+          "baudrate": "Baud Rate",
+          "bytesize": "Data Bits",
+          "parity": "Parity",
+          "stopbits": "Stop Bits"
+        }
+      },
+      "tcp": {
+        "title": "TCP Connection", 
+        "description": "Configure TCP/IP connection parameters",
+        "data": {
+          "host": "Host",
+          "tcp_port": "Port",
+          "slave_id": "Slave ID"
+        }
+      }
+    },
+    "error": {
+      "invalid_slave_id": "Invalid slave ID format",
+      "invalid_slave_id_range": "Slave ID must be between 1 and 247",
+      "unknown": "Unknown error occurred"
+    }
+  }
+}
