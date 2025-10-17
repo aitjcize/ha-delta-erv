@@ -50,9 +50,9 @@ REG_EXHAUST_AIR_3_PCT = 0x0C  # 排風機風量 3 (%)
 # Speed control registers
 REG_SUPPLY_FAN_SPEED = 0x0D  # 送風機轉速
 REG_EXHAUST_FAN_SPEED = 0x0E  # 排風機轉速
+REG_BYPASS_FUNCTION = 0x0F  # 旁通功能
 
 # Function registers
-REG_BYPASS_FUNCTION = 0x0F  # 旁通功能
 REG_ABNORMAL_STATUS = 0x10  # 異常狀態
 REG_OUTDOOR_TEMP = 0x11  # 外氣溫度
 REG_INDOOR_RETURN_TEMP = 0x12  # 室內回風溫度
@@ -64,6 +64,15 @@ REG_FAN_CONTROL_INTERNAL_CIRCULATION = 0x15  # 風量控制與內循環功能輸
 REG_RS485_CONTROL = 0x16  # RS485控制設定
 REG_SYSTEM_WEIGHT = 0x17  # 系統重量
 REG_TEMP_DETECTION = 0x18  # 溫度偵測
+
+# Bypass function values (register 0x0F)
+BYPASS_HEAT_EXCHANGE = 0x00  # 全熱交換
+BYPASS_BYPASS = 0x01  # 旁通功能
+BYPASS_AUTO = 0x02  # 自動模式 (出廠設定)
+
+# Internal circulation values (register 0x14)
+INTERNAL_CIRC_HEAT_EXCHANGE = 0x00  # 熱交換 (出廠設定)
+INTERNAL_CIRC_INTERNAL = 0x01  # 內循環
 
 # Fan speed values for register 0x06 (風量設定)
 # We use Custom 1 exclusively for fine-grained percentage control

@@ -11,7 +11,7 @@ from .modbus import DeltaERVModbusClient
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.FAN, Platform.SENSOR]
+PLATFORMS = [Platform.FAN, Platform.SENSOR, Platform.SELECT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
