@@ -66,9 +66,28 @@ REG_SYSTEM_WEIGHT = 0x17  # 系統重量
 REG_TEMP_DETECTION = 0x18  # 溫度偵測
 
 # Fan speed values for register 0x06 (風量設定)
-FAN_SPEED_1 = 0x04  # 風量 1 (Low)
-FAN_SPEED_2 = 0x05  # 風量 2 (Medium)
-FAN_SPEED_3 = 0x06  # 風量 3 (High)
+# We use Custom 1 exclusively for fine-grained percentage control
+FAN_SPEED_CUSTOM_1 = 0x01  # Custom 1 - programmable via registers 0x07 & 0x0A
+
+# Percentage registers accept values 0x00-0x64 (0-100%)
+# Fan RPM ranges (observed from device)
+EXHAUST_MIN_RPM = 400
+EXHAUST_MAX_RPM = 1840
+SUPPLY_MIN_RPM = 380
+SUPPLY_MAX_RPM = 2300
+
+# Percentage register ranges (observed - fans hit max RPM at these register values)
+EXHAUST_MIN_REGISTER_PCT = 1  # Minimum register value for operation (400 rpm)
+EXHAUST_MAX_REGISTER_PCT = (
+    48  # Exhaust reaches max RPM at 48% register value (1840 rpm)
+)
+SUPPLY_MIN_REGISTER_PCT = 1  # Minimum register value for operation (380 rpm)
+SUPPLY_MAX_REGISTER_PCT = (
+    60  # Supply reaches max RPM at 60% register value (2300 rpm)
+)
+
+# Maintain 25% faster supply RPM to create positive indoor pressure
+SUPPLY_RPM_MULTIPLIER = 1.25
 
 # Power control values for register 0x05 (開關機)
 POWER_OFF = 0x00  # 關機 (出廠設定)

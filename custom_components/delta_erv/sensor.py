@@ -1,7 +1,6 @@
 """Sensor platform for Delta ERV integration."""
 
 import logging
-from typing import Optional
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
