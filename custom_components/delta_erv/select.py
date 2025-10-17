@@ -1,7 +1,6 @@
 """Select platform for Delta ERV integration."""
 
 import logging
-from typing import Any
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -86,7 +85,9 @@ class DeltaERVBypassSelect(SelectEntity):
         result = await self._client.async_read_register(REG_BYPASS_FUNCTION)
         if result:
             mode_value = result.registers[0]
-            self._attr_current_option = BYPASS_MODES_REVERSE.get(mode_value, "Heat Exchange")
+            self._attr_current_option = BYPASS_MODES_REVERSE.get(
+                mode_value, "Heat Exchange"
+            )
         else:
             _LOGGER.error("Failed to read bypass mode")
 
@@ -134,7 +135,9 @@ class DeltaERVInternalCirculationSelect(SelectEntity):
 
     async def async_update(self) -> None:
         """Update the current internal circulation mode."""
-        result = await self._client.async_read_register(REG_INTERNAL_CIRCULATION)
+        result = await self._client.async_read_register(
+            REG_INTERNAL_CIRCULATION
+        )
         if result:
             mode_value = result.registers[0]
             self._attr_current_option = INTERNAL_CIRC_MODES_REVERSE.get(
@@ -148,7 +151,9 @@ class DeltaERVInternalCirculationSelect(SelectEntity):
         # Check if machine is on
         power_result = await self._client.async_read_register(REG_POWER)
         if not power_result or power_result.registers[0] != POWER_ON:
-            _LOGGER.error("Cannot change internal circulation mode when ERV is off")
+            _LOGGER.error(
+                "Cannot change internal circulation mode when ERV is off"
+            )
             return
 
         mode_value = INTERNAL_CIRC_MODES.get(option)
@@ -160,6 +165,8 @@ class DeltaERVInternalCirculationSelect(SelectEntity):
                 self._attr_current_option = option
                 _LOGGER.info(f"Internal circulation mode changed to {option}")
             else:
-                _LOGGER.error(f"Failed to set internal circulation mode to {option}")
+                _LOGGER.error(
+                    f"Failed to set internal circulation mode to {option}"
+                )
         else:
             _LOGGER.error(f"Unknown internal circulation mode: {option}")

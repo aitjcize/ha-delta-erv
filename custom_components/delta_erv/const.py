@@ -88,7 +88,7 @@ SUPPLY_MAX_RPM = 2300
 # Percentage register ranges (observed - fans hit max RPM at these register values)
 EXHAUST_MIN_REGISTER_PCT = 1  # Minimum register value for operation (400 rpm)
 EXHAUST_MAX_REGISTER_PCT = (
-    48  # Exhaust reaches max RPM at 48% register value (1840 rpm)
+    50  # Exhaust reaches max RPM at 50% register value (1840 rpm)
 )
 SUPPLY_MIN_REGISTER_PCT = 1  # Minimum register value for operation (380 rpm)
 SUPPLY_MAX_REGISTER_PCT = (

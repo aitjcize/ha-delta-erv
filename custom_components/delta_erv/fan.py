@@ -52,20 +52,24 @@ def calculate_fan_percentages(user_percentage: int) -> tuple[int, int]:
     if user_percentage == 0:
         return 0, 0
 
-    # Map user 1-100% to register ranges
-    # Exhaust: 1-100% user → 1-48% register
+    # Quantize to 10% steps (0, 10, 20, ..., 100) for consistency with speed_count
+    quantized_pct = round(user_percentage / 10) * 10
+    quantized_pct = max(0, min(100, quantized_pct))  # Ensure 0-100 range
+
+    # Map quantized percentage to register ranges
+    # Exhaust: 10-100% user → 1-48% register
     exhaust_pct = int(
         EXHAUST_MIN_REGISTER_PCT
-        + (user_percentage - 1)
-        / 99.0
+        + (quantized_pct - 10)
+        / 90.0
         * (EXHAUST_MAX_REGISTER_PCT - EXHAUST_MIN_REGISTER_PCT)
     )
 
-    # Supply: 1-100% user → 1-62% register
+    # Supply: 10-100% user → 1-63% register
     supply_pct = int(
         SUPPLY_MIN_REGISTER_PCT
-        + (user_percentage - 1)
-        / 99.0
+        + (quantized_pct - 10)
+        / 90.0
         * (SUPPLY_MAX_REGISTER_PCT - SUPPLY_MIN_REGISTER_PCT)
     )
 
@@ -78,8 +82,8 @@ def calculate_fan_percentages(user_percentage: int) -> tuple[int, int]:
     )
 
     _LOGGER.debug(
-        f"User {user_percentage}% -> Exhaust register: {exhaust_pct}%, "
-        f"Supply register: {supply_pct}%"
+        f"User {user_percentage}% (quantized: {quantized_pct}%) -> "
+        f"Exhaust register: {exhaust_pct}%, Supply register: {supply_pct}%"
     )
 
     return supply_pct, exhaust_pct
@@ -95,20 +99,22 @@ def calculate_user_percentage(supply_pct: int, exhaust_pct: int) -> int:
         exhaust_pct: Exhaust fan percentage from register
 
     Returns:
-        User-facing percentage (0-100)
+        User-facing percentage (0-100), quantized to 10% steps
     """
     if exhaust_pct == 0:
         return 0
 
-    # Reverse map: exhaust register 1-48% → user 1-100%
+    # Reverse map: exhaust register 1-48% → user 10-100%
     user_pct = int(
-        1
+        10
         + (exhaust_pct - EXHAUST_MIN_REGISTER_PCT)
         / (EXHAUST_MAX_REGISTER_PCT - EXHAUST_MIN_REGISTER_PCT)
-        * 99
+        * 90
     )
 
-    return max(0, min(100, user_pct))
+    # Quantize to 10% steps
+    quantized = round(user_pct / 10) * 10
+    return max(0, min(100, quantized))
 
 
 async def async_setup_entry(
@@ -139,7 +145,9 @@ class DeltaERVFan(FanEntity):
         | FanEntityFeature.TURN_ON
         | FanEntityFeature.TURN_OFF
     )
-    _attr_speed_count = 100  # Enable fine-grained control (1% increments)
+    _attr_speed_count = (
+        10  # 10 speed levels for better HomeKit compatibility (10% increments)
+    )
 
     def __init__(self, hass, name, client):
         """Initialize the fan device."""
@@ -192,7 +200,7 @@ class DeltaERVFan(FanEntity):
             else:
                 # Fallback to default if read fails
                 if self._attr_percentage is None:
-                    self._attr_percentage = 30  # Default to 30%
+                    self._attr_percentage = 60
         else:
             self._attr_percentage = 0
 
