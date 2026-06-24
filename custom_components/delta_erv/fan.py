@@ -56,8 +56,8 @@ def calculate_fan_percentages(user_percentage: int) -> tuple[int, int]:
     if user_percentage == 0:
         return 0, 0
 
-    # Quantize to 10% steps (0, 10, 20, ..., 100) for consistency with speed_count
-    quantized_pct = round(user_percentage / 10) * 10
+    # Quantize to 5% steps (0, 5, 10, ..., 100) for consistency with speed_count
+    quantized_pct = round(user_percentage / 5) * 5
     quantized_pct = max(0, min(100, quantized_pct))  # Ensure 0-100 range
 
     # Map quantized percentage to register ranges
@@ -103,7 +103,7 @@ def calculate_user_percentage(supply_pct: int, exhaust_pct: int) -> int:
         exhaust_pct: Exhaust fan percentage from register
 
     Returns:
-        User-facing percentage (0-100), quantized to 10% steps
+        User-facing percentage (0-100), quantized to 5% steps
     """
     if exhaust_pct == 0:
         return 0
@@ -116,8 +116,8 @@ def calculate_user_percentage(supply_pct: int, exhaust_pct: int) -> int:
         * 90
     )
 
-    # Quantize to 10% steps
-    quantized = round(user_pct / 10) * 10
+    # Quantize to 5% steps
+    quantized = round(user_pct / 5) * 5
     return max(0, min(100, quantized))
 
 
@@ -149,9 +149,7 @@ class DeltaERVFan(FanEntity):
         | FanEntityFeature.TURN_ON
         | FanEntityFeature.TURN_OFF
     )
-    _attr_speed_count = (
-        10  # 10 speed levels for better HomeKit compatibility (10% increments)
-    )
+    _attr_speed_count = 20  # 20 speed levels (5% increments); device registers resolve far finer
 
     def __init__(self, hass, name, client):
         """Initialize the fan device."""
