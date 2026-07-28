@@ -6,7 +6,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_SLAVE_ID, DOMAIN
+from .const import CONF_NAME, CONF_SLAVE_ID, DOMAIN
+from .coordinator import DeltaERVDataUpdateCoordinator
 from .modbus import DeltaERVModbusClient
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,13 +19,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Delta ERV from a config entry."""
     config = entry.data
 
-    # Create the Modbus client once
+    # Create the Modbus client once (connection is lazy — opened on first read).
     slave_id = config[CONF_SLAVE_ID]
     modbus_client = DeltaERVModbusClient(hass, config, slave_id)
+
+    coordinator = DeltaERVDataUpdateCoordinator(
+        hass, modbus_client, config[CONF_NAME]
+    )
+    # First poll: if the ERV is unreachable this raises ConfigEntryNotReady,
+    # giving the standard "Failed setup, retrying" behavior. Once set up, a later
+    # outage flips the entities to "unavailable" via the coordinator instead.
+    await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = {
         "client": modbus_client,
+        "coordinator": coordinator,
         "config": config,
         "slave_id": slave_id,
     }
